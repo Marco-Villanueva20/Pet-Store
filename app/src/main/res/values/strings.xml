@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Pet Store</string>
+
+    <string name="vendedor">Vendedor</string>
+    <string name="cliente">Cliente</string>
+</resources>
