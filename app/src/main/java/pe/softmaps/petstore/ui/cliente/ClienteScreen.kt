@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -26,9 +29,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pe.softmaps.petstore.R
 
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ClienteScreen() {
     Column(
@@ -45,10 +50,13 @@ fun FormularioLogin() {
     var contrasena by remember { mutableStateOf("") }
 
     Text(text = "Iniciar Sesión como Cliente")
-    Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
+    Spacer(
+        Modifier.height(dimensionResource(R.dimen.medium_padding))
+    )
     Image(painter = painterResource(R.drawable.ic_cliente), contentDescription = null)
     Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
-    CampoTexto(value = correo,
+    CampoTexto(
+        value = correo,
         label = "Correo",
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         onValueChange = { textoEscrito ->
@@ -72,11 +80,21 @@ fun FormularioLogin() {
     Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
     Row {
         IconButton(onClick = {}) {
-            Image(painter = painterResource(R.drawable.ic_google_login),
-                contentDescription = null, modifier = Modifier.size(32.dp))
+            Image(
+                painter = painterResource(R.drawable.ic_google_login),
+                contentDescription = null, modifier = Modifier.size(32.dp)
+            )
         }
     }
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                end = dimensionResource(
+                    R.dimen.large_padding
+                )
+            ), horizontalAlignment = Alignment.End
+    ) {
         Text(text = "¿No tienes una cuenta?")
         Text(text = "Regístrate", color = Color.Cyan)
     }
@@ -92,7 +110,7 @@ fun CampoTexto(
     trailingIcon: @Composable (() -> Unit)? = null,
     onValueChange: (String) -> Unit
 ) {
-    TextField(
+    OutlinedTextField(
         value = value,
         label = { Text(text = label) },
         leadingIcon = leadingIcon,
@@ -101,5 +119,10 @@ fun CampoTexto(
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         onValueChange = onValueChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = dimensionResource(R.dimen.medium_padding)
+            )
     )
 }
