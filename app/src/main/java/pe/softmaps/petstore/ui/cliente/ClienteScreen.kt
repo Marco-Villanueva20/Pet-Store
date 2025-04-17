@@ -9,13 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,9 +59,11 @@ fun FormularioLogin() {
     Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
     CampoTexto(
         value = correo,
-        label = "Correo",
+        label = "Correo Electrónico",
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        onValueChange = { textoEscrito ->
+        leadingIcon = {
+            Icon(Icons.Filled.Email, contentDescription = null)
+        }, onValueChange = { textoEscrito ->
             correo = textoEscrito
         }
     )
@@ -69,7 +73,11 @@ fun FormularioLogin() {
         label = "Contraseña",
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        leadingIcon = { },
+        leadingIcon = {
+            Icon(
+                Icons.Default.Lock, contentDescription = null
+            )
+        },
         onValueChange = {
             contrasena = it
         })

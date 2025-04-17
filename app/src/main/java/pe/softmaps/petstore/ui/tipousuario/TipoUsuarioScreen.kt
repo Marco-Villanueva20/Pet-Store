@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import pe.softmaps.petstore.R
 
-@Preview(showSystemUi = true, showBackground = true)
+
 @Composable
 fun TipoUsuarioScreen(
     onClickVendedor: () -> Unit,
@@ -74,4 +74,13 @@ fun TipoUsuarioItem(
             Text(text = stringResource(nombreId))
         }
     }
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+fun TipoUsuarioScreenPreview() {
+    TipoUsuarioScreen(
+        onClickVendedor = {},
+        onClickCliente = {}
+    )
 }
