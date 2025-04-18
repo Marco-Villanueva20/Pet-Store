@@ -1,9 +1,6 @@
 package pe.softmaps.petstore.ui.cliente
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,23 +8,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicSecureTextField
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.TextObfuscationMode
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,16 +35,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pe.softmaps.petstore.R
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun ClienteScreen() {
+fun ClienteScreen(
+
+) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         FormularioLogin()
@@ -55,9 +56,8 @@ fun ClienteScreen() {
 }
 
 @Composable
-fun FormularioLogin() {
-    var correo by remember { mutableStateOf("") }
-    var contrasena = remember { TextFieldState() }
+fun FormularioLogin(viewModel: ClienteViewModel = viewModel()) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Text(text = "Iniciar Sesión como Cliente")
     Spacer(
@@ -66,20 +66,28 @@ fun FormularioLogin() {
     Image(painter = painterResource(R.drawable.ic_cliente), contentDescription = null)
     Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
     CampoTexto(
-        value = correo,
+        value = uiState.correo,
+        onValueChange = { viewModel.onValuechangeCorreo(it) },
         label = "Correo Electrónico",
+        placeholder = "usuario@ejemplo.com",
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        leadingIcon = {
-            Icon(Icons.Filled.Email, contentDescription = null)
-        }, onValueChange = { textoEscrito ->
-            correo = textoEscrito
-        }
+        leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
+        isError = viewModel.isErrorCorreo(),
+        errorMessage = "Correo inválido"
     )
     Spacer(Modifier.height(dimensionResource(R.dimen.small_padding)))
 
-    CampoTextoContrasena(
-        state = contrasena,
-        modifier = Modifier.padding(dimensionResource(R.dimen.small_padding)),
+    CampoTexto(
+        value = uiState.contrasena,
+        onValueChange = { viewModel.onValuechangeContrasena(it) },
+        label = "Contraseña",
+        placeholder = "Ingresa tu contraseña",
+        isPassword = true,
+        passwordVisible = uiState.mostrarPass,
+        onPasswordToggle = { viewModel.toggleMostrarPass() },
+        leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
+        isError = viewModel.isErrorContrasena(),
+        errorMessage = "Mínimo 6 caracteres"
     )
 
     Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
@@ -112,87 +120,74 @@ fun FormularioLogin() {
 @Composable
 fun CampoTexto(
     value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
     label: String = "",
+    placeholder: String? = null,
+    isError: Boolean = false,
+    errorMessage: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    onValueChange: (String) -> Unit
+    isPassword: Boolean = false,
+    passwordVisible: Boolean = false,
+    onPasswordToggle: (() -> Unit)? = null
 ) {
     OutlinedTextField(
-        value = value,
-        label = { Text(text = label) },
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        singleLine = true,
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
-        onValueChange = onValueChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = dimensionResource(R.dimen.medium_padding)
-            )
-    )
-}
-
-@Composable
-fun CampoTextoContrasena(
-    state: TextFieldState,
-    modifier: Modifier = Modifier,
-) {
-    var showPassword by remember { mutableStateOf(false) }
-    BasicSecureTextField(
-        state = state,
+        value = value,// Texto que muestra el campo
+        onValueChange = onValueChange,// Actualiza el texto
         modifier = modifier
-            .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.small_padding))
-            .border(
-                1.dp, Color.LightGray, RoundedCornerShape(dimensionResource(R.dimen.small_padding))
-            )
-            .padding(6.dp),
-        textObfuscationMode = if (showPassword) TextObfuscationMode.Visible
-        else TextObfuscationMode.RevealLastTyped,
-        decorator = { innerTextField ->
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                ){
-                    // Icono izquierdo (candado)
-                    Icon( Icons.Filled.Lock,
-                        contentDescription = "Ícono de contraseña",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .padding(end = 8.dp)
-                    )
-                    Box(modifier = Modifier.weight(1f)) {
-                        // Placeholder
-                        if (state.text.isEmpty()) {
-                            Text(
-                                text = "Ingrese Contraseña",
-                                color = Color.Gray
-                            )
-                        }
-                        innerTextField()
-                    }
-
-
-                }
-                // Icono derecho (ojo)
-                Icon(if (showPassword) {
-                    Icons.Filled.Visibility
-                } else {
-                    Icons.Filled.Lock
-                }, contentDescription = "Toggle password visibility",
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .requiredSize(48.dp)
-                        .padding(16.dp)
-                        .clickable { showPassword = !showPassword }
+            .fillMaxWidth()// Ocupa el ancho maximo
+            .padding(horizontal = dimensionResource(R.dimen.medium_padding)), // Margen horizontal
+        label = { if (label.isNotEmpty()) Text(label) }, // Texto flotante (label)
+        placeholder = { // Texto gris dentro si está vacío
+            if (placeholder != null && value.isEmpty()) {
+                Text(placeholder, color = Color.Gray)
+            }
+        },
+        isError = isError,// Activa estado de error (rojo)
+        supportingText = {// Mensaje de ayuda o error abajo
+            if (isError && !errorMessage.isNullOrEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
                 )
+            }
+        },
+        singleLine = true,// Solo una línea de texto
+        // Si es password, aplicamos la transformación adecuada
+        visualTransformation = when {
+            isPassword && !passwordVisible ->
+                PasswordVisualTransformation() // Oculta el texto
+            else ->
+                visualTransformation // Otro tipo de transformación
+        },
+        // Teclado especial para password si aplica
+        keyboardOptions = if (isPassword) {
+            keyboardOptions.copy(keyboardType = KeyboardType.Password)
+        } else keyboardOptions,
+
+        leadingIcon = leadingIcon,// Ícono al inicio si se pasa
+
+        trailingIcon = {
+            when {
+                // Ojo para toggle de contraseña
+                isPassword && onPasswordToggle != null -> {
+                    IconButton(onClick = onPasswordToggle) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Filled.Visibility
+                            else Icons.Filled.VisibilityOff,
+                            contentDescription = "Mostrar u ocultar contraseña"
+                        )
+                    }
+                }
+                // Ícono genérico al final si no es password
+                trailingIcon != null -> {
+                    trailingIcon()
+                }
             }
         }
     )
 }
-
