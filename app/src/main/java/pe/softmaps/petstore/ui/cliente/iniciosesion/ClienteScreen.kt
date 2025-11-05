@@ -1,6 +1,9 @@
 package pe.softmaps.petstore.ui.cliente
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,19 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,36 +33,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pe.softmaps.petstore.R
+import pe.softmaps.petstore.ui.common.CampoTexto
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ClienteScreen(
-
+    onNavigateRegistro: ()->Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        FormularioLogin()
+        FormularioLoginCliente(onNavigateRegistro)
     }
 }
 
 @Composable
-fun FormularioLogin(viewModel: ClienteViewModel = viewModel()) {
+fun FormularioLoginCliente(onNavigateRegistro: ()->Unit ,viewModel: ClienteViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Text(text = "Iniciar Sesión como Cliente")
+    Text(text = "Iniciar Sesión como Cliente",
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold)
     Spacer(
         Modifier.height(dimensionResource(R.dimen.medium_padding))
     )
-    Image(painter = painterResource(R.drawable.ic_cliente), contentDescription = null)
+    Image(
+        painter = painterResource(R.drawable.ic_cliente),
+        contentDescription = null,
+        modifier = Modifier.size(dimensionResource(R.dimen.image_size))
+    )
     Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
     CampoTexto(
         value = uiState.correo,
@@ -88,11 +98,23 @@ fun FormularioLogin(viewModel: ClienteViewModel = viewModel()) {
     )
 
     Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
+
     Button(onClick = {}) {
         Text(text = "Iniciar Sesión")
     }
     Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
-    Row {
+    Row(
+        modifier = Modifier
+            .height(60.dp)
+            .width(100.dp)
+            .border(
+                width = 1.dp,
+                color = Color.LightGray,
+                shape = RoundedCornerShape(8.dp)
+            ),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         IconButton(onClick = {}) {
             Image(
                 painter = painterResource(R.drawable.ic_google_login),
@@ -110,81 +132,8 @@ fun FormularioLogin(viewModel: ClienteViewModel = viewModel()) {
             ), horizontalAlignment = Alignment.End
     ) {
         Text(text = "¿No tienes una cuenta?")
-        Text(text = "Regístrate", color = Color.Cyan)
+        Spacer(Modifier.height(dimensionResource(R.dimen.small_padding)))
+        Text(text = "Regístrate", color = Color.Cyan, modifier = Modifier.clickable { onNavigateRegistro() })
     }
 }
 
-@Composable
-fun CampoTexto(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    label: String = "",
-    placeholder: String? = null,
-    isError: Boolean = false,
-    errorMessage: String? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    isPassword: Boolean = false,
-    passwordVisible: Boolean = false,
-    onPasswordToggle: (() -> Unit)? = null
-) {
-    OutlinedTextField(
-        value = value,// Texto que muestra el campo
-        onValueChange = onValueChange,// Actualiza el texto
-        modifier = modifier
-            .fillMaxWidth()// Ocupa el ancho maximo
-            .padding(horizontal = dimensionResource(R.dimen.medium_padding)), // Margen horizontal
-        label = { if (label.isNotEmpty()) Text(label) }, // Texto flotante (label)
-        placeholder = { // Texto gris dentro si está vacío
-            if (placeholder != null && value.isEmpty()) {
-                Text(placeholder, color = Color.Gray)
-            }
-        },
-        isError = isError,// Activa estado de error (rojo)
-        supportingText = {// Mensaje de ayuda o error abajo
-            if (isError && !errorMessage.isNullOrEmpty()) {
-                Text(
-                    text = errorMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        },
-        singleLine = true,// Solo una línea de texto
-        // Si es password, aplicamos la transformación adecuada
-        visualTransformation = when {
-            isPassword && !passwordVisible ->
-                PasswordVisualTransformation() // Oculta el texto
-            else ->
-                visualTransformation // Otro tipo de transformación
-        },
-        // Teclado especial para password si aplica
-        keyboardOptions = if (isPassword) {
-            keyboardOptions.copy(keyboardType = KeyboardType.Password)
-        } else keyboardOptions,
-
-        leadingIcon = leadingIcon,// Ícono al inicio si se pasa
-
-        trailingIcon = {
-            when {
-                // Ojo para toggle de contraseña
-                isPassword && onPasswordToggle != null -> {
-                    IconButton(onClick = onPasswordToggle) {
-                        Icon(
-                            imageVector = if (passwordVisible) Icons.Filled.Visibility
-                            else Icons.Filled.VisibilityOff,
-                            contentDescription = "Mostrar u ocultar contraseña"
-                        )
-                    }
-                }
-                // Ícono genérico al final si no es password
-                trailingIcon != null -> {
-                    trailingIcon()
-                }
-            }
-        }
-    )
-}

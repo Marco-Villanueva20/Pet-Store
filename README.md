@@ -1,33 +1,72 @@
 # Pet Store App
 
-Aplicación Android para una tienda de mascotas, desarrollada con Kotlin y Jetpack Compose. Permite a los usuarios interactuar como clientes o vendedores.
+Aplicación Android para una tienda de mascotas, desarrollada con Kotlin y Jetpack Compose. Permite a los usuarios interactuar como clientes o vendedores, facilitando la gestión de productos, compras y ventas en un entorno de e-commerce para mascotas.
+
+Repositorio: [https://github.com/Marco-Villanueva20/Pet-Store](https://github.com/Marco-Villanueva20/Pet-Store)
 
 ## Tabla de Contenidos
 
-- [Características Principales](#características-principales)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [Instalación y Configuración](#instalación-y-configuración)
-- [Uso de la Aplicación](#uso-de-la-aplicación)
-- [Contribuciones](#contribuciones)
-- [Licencia](#licencia)
+- [Pet Store App](#pet-store-app)
+  - [Tabla de Contenidos](#tabla-de-contenidos)
+  - [Descripción](#descripción)
+  - [Características Principales](#características-principales)
+  - [Arquitectura](#arquitectura)
+  - [Tecnologías Utilizadas](#tecnologías-utilizadas)
+  - [Instalación y Configuración](#instalación-y-configuración)
+  - [Uso de la Aplicación](#uso-de-la-aplicación)
+  - [Estado del Proyecto](#estado-del-proyecto)
+  - [Contribuciones](#contribuciones)
+  - [Licencia](#licencia)
+
+## Descripción
+
+Pet Store es una aplicación móvil Android diseñada para conectar a clientes y vendedores en el mercado de productos para mascotas. Los usuarios pueden seleccionar su rol al iniciar la app, accediendo a funcionalidades específicas como inicio de sesión, registro y futuras operaciones de compra/venta. La app está construida siguiendo las mejores prácticas de desarrollo Android, utilizando Jetpack Compose para una interfaz moderna y responsiva.
 
 ## Características Principales
 
 *   **Selección de Tipo de Usuario:**
-    *   Al iniciar, la aplicación permite elegir entre un perfil de "Cliente" o "Vendedor".
+    *   Pantalla inicial que permite elegir entre "Cliente" o "Vendedor" con imágenes representativas.
+
 *   **Funcionalidades de Cliente:**
     *   **Inicio de Sesión:**
-        *   Formulario para ingresar con correo electrónico y contraseña.
-        *   Validación de formato de correo electrónico.
-        *   Validación de longitud mínima de contraseña (6 caracteres).
-        *   Opción para mostrar/ocultar la contraseña.
-    *   **(Potencial) Inicio de Sesión con Google:**
-        *   Interfaz preparada para la integración con Google Sign-In (icono presente).
-    *   **(Potencial) Registro de Nuevos Clientes:**
-        *   Interfaz con enlace para registrarse (texto "Regístrate" presente).
+        *   Formulario con campos para correo electrónico y contraseña.
+        *   Validación en tiempo real: formato de email (debe contener '@') y longitud mínima de contraseña (6 caracteres).
+        *   Opción para mostrar/ocultar la contraseña con icono de ojo.
+        *   Botón de "Iniciar Sesión" (lógica de autenticación no implementada aún).
+        *   Opción de inicio de sesión con Google (interfaz preparada, pero no funcional).
+    *   **Registro de Nuevos Clientes:**
+        *   Pantalla con campos para nombres completos, correo, contraseña y confirmar contraseña.
+        *   Enlace desde la pantalla de login para navegar al registro.
+        *   Campos de contraseña con toggle para visibilidad (parcialmente implementado en UI, sin lógica completa).
+
 *   **Funcionalidades de Vendedor:**
-    *   Pantalla designada para vendedores (`VendedorScreen`).
-    *   *Nota: Actualmente, la pantalla de vendedor está vacía y las funcionalidades específicas no están implementadas en el código visible.*
+    *   **Inicio de Sesión:**
+        *   Similar al de cliente: validaciones de email y contraseña, toggle de visibilidad.
+        *   Botón de "Iniciar Sesión" (sin lógica implementada).
+        *   Enlace para "Regístrate" (pantalla de registro vacía).
+    *   **Registro de Nuevos Vendedores:**
+        *   Pantalla preparada pero sin contenido implementado.
+
+*   **Navegación:**
+    *   Uso de Jetpack Navigation Compose para transiciones entre pantallas.
+    *   Top y Bottom App Bars simples con título "Pet Store".
+
+*   **Componentes Reutilizables:**
+    *   Campo de texto personalizado (`CampoTexto`) con soporte para passwords, errores y iconos.
+
+## Arquitectura
+
+La aplicación sigue el patrón de arquitectura **MVVM (Model-View-ViewModel)**, dividido en capas claras:
+
+- **UI Layer:** Contiene las pantallas (Screens) y ViewModels. Las pantallas están en `ui/`, y manejan la composición con Jetpack Compose. Los ViewModels gestionan el estado UI y lógica de negocio básica.
+- **Domain Layer:** Define los estados UI (UIState) en `domain/`, como `ClienteUIState`, `VendedorUIState`, etc. Representan el estado de las pantallas.
+- **Data Layer:** Actualmente vacía (`data/`), preparada para repositorios, APIs o bases de datos locales en futuras implementaciones.
+
+Estructura de paquetes:
+- `pe.softmaps.petstore/`
+  - `data/` (cliente/, vendedor/) - Para datos y lógica de acceso.
+  - `domain/` (cliente/, vendedor/) - Estados y lógica de dominio.
+  - `ui/` (cliente/, vendedor/, common/, navegacion/, theme/, tipousuario/) - Pantallas, ViewModels y componentes compartidos.
 
 ## Tecnologías Utilizadas
 
@@ -38,80 +77,85 @@ Aplicación Android para una tienda de mascotas, desarrollada con Kotlin y Jetpa
 *   **Gestión de Dependencias y Build:**
     *   Gradle (Android Gradle Plugin v8.8.0)
     *   Gradle Kotlin DSL
-    *   Gradle Version Catalog
+    *   Gradle Version Catalog (`gradle/libs.versions.toml`)
 *   **Componentes de Arquitectura de Android Jetpack:**
     *   Lifecycle (ViewModel, Lifecycle Runtime KTX)
-    *   Navigation (Navigation Compose)
-    *   Activity (Activity Compose)
-    *   Core KTX
+    *   Navigation (Navigation Compose v2.8.9)
+    *   Activity (Activity Compose v1.10.1)
+    *   Core KTX (v1.16.0)
 *   **Pruebas:**
-    *   JUnit
-    *   AndroidX Test (JUnit, Espresso)
+    *   JUnit (v4.13.2)
+    *   AndroidX Test (JUnit v1.2.1, Espresso v3.6.1)
 *   **SDK de Android:**
     *   `compileSdk`: 35
     *   `minSdk`: 24
     *   `targetSdk`: 35
+*   **Recursos:**
+    *   Imágenes en `res/drawable-nodpi/` para iconos de login, tipos de usuario, etc.
+    *   Strings, colores, dimens y temas en `res/values/`.
 
 ## Instalación y Configuración
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone <URL-del-repositorio-del-proyecto>
+    git clone https://github.com/Marco-Villanueva20/Pet-Store.git
     ```
-    (Reemplaza `<URL-del-repositorio-del-proyecto>` con la URL real del repositorio)
 
 2.  **Abrir en Android Studio:**
-    *   Inicia Android Studio.
-    *   Selecciona "Open an Existing Project" (Abrir un proyecto existente).
-    *   Navega hasta el directorio donde clonaste el repositorio y selecciónalo.
+    *   Inicia Android Studio (versión recomendada: Arctic Fox o superior).
+    *   Selecciona "Open an Existing Project".
+    *   Navega al directorio clonado y selecciónalo.
 
 3.  **Sincronización con Gradle:**
-    *   Android Studio sincronizará automáticamente el proyecto y descargará las dependencias necesarias definidas en los archivos `build.gradle.kts` y `gradle/libs.versions.toml`.
-    *   Asegúrate de tener una conexión a internet activa.
+    *   Android Studio sincronizará automáticamente las dependencias desde `build.gradle.kts` y `gradle/libs.versions.toml`.
+    *   Requiere conexión a internet para descargar librerías.
 
-4.  **Configurar un Emulador o Dispositivo Android:**
-    *   **Emulador:**
-        *   En Android Studio, ve a `Tools > AVD Manager`.
-        *   Crea un nuevo Dispositivo Virtual Android (AVD) compatible (API nivel 24 o superior).
-    *   **Dispositivo Físico:**
-        *   Habilita las "Opciones de desarrollador" y la "Depuración por USB" en tu dispositivo.
-        *   Conecta el dispositivo a tu computadora.
+4.  **Configurar Emulador o Dispositivo:**
+    *   **Emulador:** Crea un AVD en `Tools > AVD Manager` con API 24+.
+    *   **Dispositivo Físico:** Habilita "Opciones de desarrollador" y "Depuración por USB".
 
 5.  **Ejecutar la aplicación:**
-    *   Selecciona el emulador o dispositivo como destino en Android Studio.
-    *   Haz clic en el botón "Run 'app'" (icono de triángulo verde).
+    *   Selecciona el emulador/dispositivo y presiona "Run 'app'".
 
 ## Uso de la Aplicación
 
 1.  **Selección de Tipo de Usuario:**
-    *   Al abrir la app, se te pedirá que elijas si eres "Vendedor" o "Cliente".
-    *   **Vendedor:** Te llevará a `VendedorScreen` (actualmente sin contenido funcional visible).
-    *   **Cliente:** Te llevará a `ClienteScreen` para iniciar sesión.
+    *   Al abrir la app, elige "Cliente" o "Vendedor" tocando la imagen correspondiente.
 
-2.  **Inicio de Sesión como Cliente (`ClienteScreen`):**
-    *   Ingresa tu correo electrónico y contraseña.
-    *   Utiliza el icono del ojo para mostrar/ocultar la contraseña.
-    *   Presiona "Iniciar Sesión".
-    *   Opcionalmente, puedes intentar usar el inicio de sesión con Google (si está implementado).
-    *   Si no tienes cuenta, busca la opción "Regístrate" para crear una (si la pantalla de registro está implementada).
+2.  **Inicio de Sesión como Cliente:**
+    *   Ingresa email y contraseña.
+    *   Usa el icono de ojo para ver/ocultar contraseña.
+    *   Presiona "Iniciar Sesión" (sin autenticación real aún).
+    *   Para registrarte, toca "Regístrate" y completa los campos.
 
-3.  **Pantalla de Vendedor (`VendedorScreen`):**
-    *   Actualmente, esta pantalla no presenta funcionalidades implementadas.
+3.  **Inicio de Sesión como Vendedor:**
+    *   Similar al cliente, pero registro no implementado.
+
+4.  **Navegación:**
+    *   Usa los botones para moverte entre pantallas.
+
+## Estado del Proyecto
+
+- **Implementado:** Selección de usuario, pantallas de login y registro (UI completa, validaciones básicas, navegación).
+- **Preparado pero no funcional:** Inicio de sesión con Google, lógica de autenticación, registro completo para vendedores.
+- **Pendiente:** Integración con backend (API para login/registro), gestión de productos, carrito de compras, etc.
+- **Pruebas:** Básicas con JUnit y Espresso, pero no exhaustivas.
+- **Versión:** 1.0 (inicial, en desarrollo).
 
 ## Contribuciones
 
-Las contribuciones son bienvenidas. Si deseas mejorar esta aplicación, por favor considera lo siguiente:
+¡Las contribuciones son bienvenidas! Para contribuir:
 
-*   Reportar bugs y sugerir nuevas características a través de los Issues del repositorio.
-*   Si deseas contribuir con código, por favor abre un Pull Request detallando los cambios realizados.
-*   Asegúrate de seguir las convenciones de código y estilo del proyecto si existen.
+*   Reporta issues o sugiere features en el [repositorio](https://github.com/Marco-Villanueva20/Pet-Store/issues).
+*   Abre un Pull Request con cambios detallados.
+*   Sigue convenciones de Kotlin y Compose (usa ViewModels para estado, separa capas).
 
-(Si este proyecto tiene un archivo `CONTRIBUTING.md` o directrices específicas, por favor refiérete a ellas).
+Si hay guías específicas, revisa `CONTRIBUTING.md` (no presente aún).
 
 ## Licencia
 
-La licencia para este proyecto no ha sido especificada en el repositorio. Por favor, contacta a los mantenedores del proyecto para obtener más información sobre los términos de uso y distribución.
+Este proyecto no tiene licencia especificada. Contacta a los mantenedores para detalles sobre uso y distribución.
 
 ---
 
-*Este README fue generado automáticamente y puede requerir ajustes o información adicional.*
+*README actualizado con contexto completo del proyecto.*
